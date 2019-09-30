@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
-const PORT = 3000;    //defaul port 3000
+const PORT = 5000;   
 const crypto = require('crypto');
+app.set('view engine', 'ejs');
 
 function generateRandomString() {
   var id = crypto.randomBytes(3).toString('hex');
@@ -15,33 +16,43 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-
-// app.get('/', (req, res) => {
-//   let templateVars = {greeting: `hello World`};
-//   res.render('hello.ejs', templateVars);
-// });
-
-// app.get('/urls.json', (req, res) => {
-//   res.json(urlDatabase);
-// })
-
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new.ejs')
+  res.render('urls_new')
 })
-
-app.get('/urls/:shortURL', (req, res) => {
-  let templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
-  res.render('urls_show.ejs', templateVars);
-})
-
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
-});
 
 app.get('/urls', (req, res) => {
   let templateVars = {urls: urlDatabase};
-  res.render('urls_index.ejs', templateVars);
+  res.render('urls_index', templateVars);
+})
+
+app.get("/urls/:shortURL", (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  res.render("urls_show", templateVars);
+});
+
+
+app.post("/urls", (req, res) => {
+  let shortURL =  generateRandomString();
+  if((req.body.longURL).includes('http://')) {
+    urlDatabase[shortURL] = req.body.longURL
+  } else {
+    urlDatabase[shortURL] = 'http://' + req.body.longURL;
+  }
+  res.redirect(`/urls/${shortURL}`);    
+});
+
+app.get('/urls/:shortURL', (req, res) => {
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};
+  res.render("urls_show", templateVars);
+})
+
+app.get('/u/:shortURL', (req, res) => {
+  let templateVars = urlDatabase[req.params.shortURL];
+  res.redirect(templateVars);
+})
+
+app.get('/urls.json', (req, res) => {
+  res.json(urlDatabase);
 })
 
 app.listen(PORT, () => {
@@ -49,4 +60,10 @@ app.listen(PORT, () => {
 });
 
 
+
+
+// app.get('/', (req, res) => {
+//   let templateVars = {greeting: `hello World`};
+//   res.render('hello.ejs', templateVars);
+// });
 
