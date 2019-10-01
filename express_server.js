@@ -1,14 +1,17 @@
 const express = require('express');
 const app = express();
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 const PORT = 5000;   
-const crypto = require('crypto');
 app.set('view engine', 'ejs');
 
 function generateRandomString() {
-  var id = crypto.randomBytes(3).toString('hex');
-  return id;
+  let str = `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`;
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += str.charAt(Math.floor(Math.random() * str.length));
+  }
+  return code;
 }
 
 const urlDatabase = {
@@ -34,7 +37,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   let shortURL =  generateRandomString();
   if((req.body.longURL).includes('http://')) {
-    urlDatabase[shortURL] = req.body.longURL
+    urlDatabase[shortURL] = req.body.longURL;
   } else {
     urlDatabase[shortURL] = 'http://' + req.body.longURL;
   }
@@ -54,6 +57,19 @@ app.get('/u/:shortURL', (req, res) => {
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 })
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect('/urls');
+})
+
+app.get('/urls/:shortURL/edit', (req, res) => {
+  let templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}
+  res.render('urls_show', templateVars);
+})
+
+app.post()
+
 
 app.listen(PORT, () => {
   console.log(`THE SERVER IS RUNNING AT ${PORT}`);
