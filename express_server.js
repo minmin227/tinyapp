@@ -63,12 +63,10 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 })
 
-app.get('/urls/:shortURL/edit', (req, res) => {
-  let templateVars = {shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]}
-  res.render('urls_show', templateVars);
-})
-
-app.post()
+app.post('/urls/:id', (req, res) => {
+  urlDatabase[req.params.id] = req.body.newlongURL;
+  res.redirect('/urls');
+}) 
 
 
 app.listen(PORT, () => {
