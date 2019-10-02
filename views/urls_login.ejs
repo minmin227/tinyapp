@@ -9,12 +9,33 @@
   <title>New URL - TinyApp Example</title>
 </head>
 
-<% include ./partials/_header %>
+<header>
+
+  <nav class="navbar navbar-expand-md navbar-dark bg-success">
+
+    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/urls">My URLs</a>
+        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+      </div>
+      <div>        
+        <form action="/register" class="form-inline ml-0 my-lg-0" method="GET">
+        <button type="submit" class="btn btn-success btn-md ml-2">register</button>
+      </form>
+    </div>
+    
+</header>
 
 <body>
 
 <div style="width: 25rem; margin: 5rem auto; padding: 50px 30px 30px; border: lightgrey solid 1px; border-radius: 10%">
-    <form method="POST" action="/register">
+    <form method="POST" action="/login">
+      <h2>LOGIN</h2>
         <div class="form-group">
           <label for="InputEmail1">Email address</label>
           <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
@@ -26,7 +47,7 @@
           <label for="InputPassword1">Password</label>
           <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
         </div>
-        <button type="submit" style="margin-top: 2rem" class="btn btn-primary">Register</button>
+        <button type="submit" style="margin-top: 2rem" class="btn btn-primary">login</button>
       </form>
 </div>
 
