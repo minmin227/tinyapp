@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = 5000;
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 app.use(cookieParser());
 app.set('view engine', 'ejs');
 
@@ -25,7 +26,7 @@ const users = {
   "aJ48lWF": {
     id: "aJ48lWF",
     email: "user@example.com",
-    password: "123"
+    password: "$2b$10$l18tZ4mpGC2AA0D0NjO79.GSbaJgC2gyG4oRjK8Dg1Q.Pe0gpmbFy"
   },
   "user2RandomID": {
     id: "user2RandomID",
@@ -132,16 +133,15 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   let idNum = generateRandomString(4);
   if (!req.body.email || !req.body.password) {
-    res.status(400).send('status code 400');
+    res.status(400).send('Please fill your password and email');
   } else if (checkEmail(req.body.email)) {
     res.send('EMAIL EXISTED !!!!')
   } else {
-    users[idNum] = { id: idNum, email: req.body.email, password: req.body.password };
+    users[idNum] = { id: idNum, email: req.body.email, password: bcrypt.hashSync(req.body.password, 10) };
     res.cookie("user_id", idNum);
     res.redirect('/urls');
   }
-  console.log(users);
-})
+})  //register new user
 
 app.get('/login', (req, res) => {
   res.render('urls_login')
@@ -149,7 +149,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   for (let user in users) {
-    if (req.body.email === users[user]["email"] && req.body.password === users[user]["password"]) {
+    if (req.body.email === users[user]["email"] && bcrypt.compareSync(req.body.password, users[user]["password"]) === true) {
       res.cookie('user_id', users[user]["id"]);
       return res.redirect('/urls');
     } else if (req.body.email !== users[user]["email"]) {
@@ -158,7 +158,7 @@ app.post('/login', (req, res) => {
       res.status(403).send('wrong password or email');
     }
   }
-})
+}) //check the login user
 
 
 
