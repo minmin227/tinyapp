@@ -32,12 +32,12 @@
           <td><%= urls[url]["longURL"] %></td>
           <td>
             <form action="/urls/<%= url %>" method="GET">
-              <button type="submit" class="btn btn-outline-primary">Edit</button>
+              <button type="submit" onclick="return confirm(`Sure want to edit?`)" class="btn btn-outline-primary">Edit</button>
             </form>
           </td>
           <td>
             <form method="POST" action="/urls/<%= url %>/delete">
-              <button type="submit" class="btn btn-outline-danger">Delete</button>
+              <button type="submit" onclick="return confirm(`Hey dude, DON'T delete it ?!`)" class="btn btn-outline-danger">Delete</button>
             </form>
           </td>
         </tr>

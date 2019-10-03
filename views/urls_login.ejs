@@ -5,51 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-  integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <title>New URL - TinyApp Example</title>
 </head>
 
-<header>
-
-  <nav class="navbar navbar-expand-md navbar-dark bg-success">
-
-    <a class="navbar-brand" href="/urls">TinyApp</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-      </div>
-      <div>        
-        <form action="/register" class="form-inline ml-0 my-lg-0" method="GET">
-        <button type="submit" class="btn btn-success btn-md ml-2">register</button>
-      </form>
-    </div>
-    
-</header>
+<% include ./partials/_header %>
 
 <body>
 
-<div style="width: 25rem; margin: 5rem auto; padding: 50px 30px 30px; border: lightgrey solid 1px; border-radius: 10%">
+  <div
+    style="width: 25rem; margin: 5rem auto; padding: 50px 30px 30px; border: lightgrey solid 1px; border-radius: 10%">
     <form method="POST" action="/login">
-      <h2>LOGIN</h2>
-        <div class="form-group">
-          <label for="InputEmail1">Email address</label>
-          <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+      <h4>Login</h4>
+      <div class="form-group">
+        <label for="InputEmail1">Email address</label>
+        <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+          placeholder="Enter email">
 
-          <small id="emailHelp" class="form-text text-muted">type your email here: www.example@gmail.com</small>
+        <small id="emailHelp" class="form-text text-muted">demo account: user@example.com</small>
 
-        </div>
-        <div class="form-group">
-          <label for="InputPassword1">Password</label>
-          <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-        </div>
-        <button type="submit" style="margin-top: 2rem" class="btn btn-primary">login</button>
-      </form>
-</div>
+      </div>
+      <div class="form-group">
+        <label for="InputPassword1">Password</label>
+        <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+        <small id="emailHelp" class="form-text text-muted">password: 123</small>
+      </div>
+      <button type="submit" style="margin-top: 2rem" class="btn btn-primary">login</button>
+    </form>
+  </div>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

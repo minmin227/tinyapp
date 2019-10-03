@@ -1,31 +1,37 @@
 <header>
-  
-    <nav class="navbar navbar-expand-md navbar-dark bg-success">
 
-      <a class="navbar-brand" href="/urls">TinyApp</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link" href="/urls">My URLs</a>
-          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        </div>
-        
-        <% if (user) { %>
-          <form class="form-inline ml-5 my-lg-0" method="POST" action="/logout">
-            <label for="logout"><h7 style="color: white">Login as: <span style="font-weight:800; text-decoration: underline"><%= user.email %></span></h7></label>
-            <button name="logout" type="submit" class="btn btn-success btn-md ml-2">logout</button>
+  <nav class="navbar navbar-expand-sm navbar-dark bg-success">
+    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/urls" onmouseover="this.style.background = 'rgb(0, 150, 52)'" onmouseout="this.style.background = 'rgb(0, 171, 52)'" style="color: white !important; border: solid 1px; border-radius: 10px">My URLs</a>
+        <a class="nav-item nav-link ml-5" href="/urls/new" onmouseover="this.style.background = 'rgb(0, 150, 52)'" onmouseout="this.style.background = 'rgb(0, 171, 52)'" style="color: white !important; border: solid 1px; border-radius: 10px">Create New URL</a>
+      </div>
+
+      <% if (user) { %>
+      <form class="form-inline ml-0 my-lg-0" method="POST" action="/logout">
+        <label for="logout">
+          <h7 style="color: white">Login as: <span
+              style="font-weight:800; text-decoration: underline"><%= user.email %></span></h7>
+        </label>
+        <button name="logout" type="submit" class="btn btn-success btn-md ml-2" style="background: white !important; color: rgb(0, 175, 65); border-radius: 10px; border: rgb(0, 171, 52) solid" onmouseover="this.style.background = 'rgb(0, 120, 52)'; this.style.color = 'rgb(255, 255, 255)'" onmouseout="this.style.background = 'rgb(255, 255, 255)'; this.style.color = 'rgb(0, 171, 52)'" ">logout</button>
+      </form>
+      <% } else { %>
+      <div class="d-flex flex-wrap ">
+          <form class="form-inline ml-0 my-lg-0" action="/login" method="GET">
+            <button type="submit" class="btn btn-success btn-md ml-0">login</button>
           </form>
-          <% } else { %>
-        <form class="form-inline ml-5 my-lg-0" action="/login" method="GET">
-          <button type="submit" class="btn btn-success btn-md ml-2">login</button>
-        </form>
-        <form action="/register" class="form-inline ml-0 my-lg-0" method="GET">
-          <button type="submit" class="btn btn-success btn-md ml-2">register</button>
-        </form>
-        <%}%>
+          <form action="/register" class="form-inline ml-0 my-lg-0" method="GET">
+            <button type="submit" class="btn btn-success btn-md ml-0">register</button>
+          </form>
+      </div>
+      <%}%>
 
+    </div>
     </nav>
   </header>
   
