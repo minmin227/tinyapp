@@ -5,28 +5,23 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = 5000;
 const bcrypt = require('bcrypt');
-
-
+const { checkEmail } = require('./helpers');
+const { urlforUser } = require('./helpers');
+const { generateRandomString } = require('./helpers.js');
 
 app.use(cookieSession({
   name: 'session',
   keys: ['0128486513'],
   maxAge: 1000 * 60 * 60
-}))
-app.set('view engine', 'ejs');
+}));
+app.set('view engine', 'ejs'); //Encode the cookie session
 
-function generateRandomString(l) {
-  let str = `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`;
-  let code = '';
-  for (let i = 0; i < l; i++) {
-    code += str.charAt(Math.floor(Math.random() * str.length));
-  }
-  return code;
-}
-
+//START: data
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", id: "aJ48lWF" },
-  i3BoGr: { longURL: "https://www.google.ca", id: "aJ48lW" }
+  b6UTxQ: { longURL: "https://www.tsn.ca", id: "aJ48lWF", date:"10/3/2019" },
+  i3BoGr: { longURL: "https://www.google.ca", id: "aJ48lW", date:"10/3/2019" },
+  b4UTxQ: { longURL: "https://www.haha.ca", id: "aJ48lWF", date: "10/3/2019" },
+  b2UTxQ: { longURL: "https://www.caca.ca", id: "aJ48lW", date:"10/3/2019" }
 };
 
 const users = {
@@ -36,30 +31,14 @@ const users = {
     password: "$2b$10$l18tZ4mpGC2AA0D0NjO79.GSbaJgC2gyG4oRjK8Dg1Q.Pe0gpmbFy"
   },
   "user2RandomID": {
-    id: "user2RandomID",
+    id: "aJ48lW",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: "$2b$10$ZGi.0nqXV0.SPMGu1JWcv.AW6753pOidA5dWQexHJ7x5Uho4Jrkj2"
   },
-}
+};
 
-const checkEmail = function (input) {
-  for (let user in users) {
-    if (input === users[user]["email"]) {
-      return true;
-    }
-  }
-}
 
-function urlforUser(cookieID) {
-  let urlUser = {};
-  for (url in urlDatabase) {
-    if (urlDatabase[url]["id"] === cookieID) {
-      urlUser[url] = urlDatabase[url];
-    }
-  }
-  return urlUser;
-}
-
+//END: data
 
 app.get('/urls/new', (req, res) => {
   let urlUserDatabase = urlforUser(req.session.user_id);
@@ -76,9 +55,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  let urlUserDatabase = urlforUser(req.session.user_id);
+  let urlUserDatabase = urlforUser(req.session.user_id, urlDatabase);
   let templateVars = { urls: urlUserDatabase, user: users[req.session.user_id] };
-  console.log(req.session.user_id);
   if (!req.session.user_id) {
     res.redirect('/login');
   } else {
@@ -87,20 +65,23 @@ app.get('/urls', (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let code = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id] };
-  res.render("urls_show", code);
+  if (!req.session.user_id) {
+    res.redirect('/login');
+  } else {
+    let code = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id], date: (new Date()).toLocaleDateString('en-US')};
+    res.render("urls_show", code);
+  }
 });
-
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString(6);
-
-  if ((req.body.longURL).includes('http://')) {
-    urlDatabase[shortURL] = { longURL: `${req.body.longURL}`, id: req.session.user_id };
+  if (!(req.body.longURL)) {
+    res.redirect(`/urls/new`);
+  } else if ((req.body.longURL).includes('http://')) {
+    urlDatabase[shortURL] = { longURL: `${req.body.longURL}`, id: req.session.user_id, date: (new Date()).toLocaleDateString('en-US') };
   } else {
-    urlDatabase[shortURL] = { longURL: `http://${req.body.longURL}`, id: req.session.user_id };
+    urlDatabase[shortURL] = { longURL: `http://${req.body.longURL}`, id: req.session.user_id, date:(new Date()).toLocaleDateString('en-US') };
   }
-  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -129,32 +110,37 @@ app.post('/urls/:shortURL', (req, res) => {
 
 
 app.post('/logout', (req, res) => {
-  req.session = null
+  req.session = null;
   res.redirect('/urls');
 });
 
 app.get('/register', (req, res) => {
   let templateVars = { urls: urlDatabase, user: users[req.session.user_id] };
-  res.render('urls_register', templateVars);
-})
+  if (req.session.user_id) {
+    res.redirect('/urls');
+  } else {
+    res.render('urls_register', templateVars);
+  }
+});
 
 app.post('/register', (req, res) => {
   let idNum = generateRandomString(4);
   if (!req.body.email || !req.body.password) {
     res.status(400).send('Please fill your password and email');
-  } else if (checkEmail(req.body.email)) {
-    res.send('EMAIL EXISTED !!!!')
+  } else if (checkEmail(req.body.email, users)) {
+    res.send('EMAIL EXISTED !!!!');
   } else {
     users[idNum] = { id: idNum, email: req.body.email, password: bcrypt.hashSync(req.body.password, 10) };
     req.session.user_id = idNum;
     res.redirect('/urls');
   }
-})  //register new user
+  console.log(users);
+});  //register new user
 
 app.get('/login', (req, res) => {
   let templateVars = { urls: urlDatabase, user: users[req.session.user_id] };
-  res.render('urls_login', templateVars)
-})
+  res.render('urls_login', templateVars);
+});
 
 app.post('/login', (req, res) => {
   for (let user in users) {
@@ -171,10 +157,7 @@ app.post('/login', (req, res) => {
   }
 
   res.status(403).send('email not found');
-}) //check the login user
-
-
-
+}); //check the login user
 
 app.listen(PORT, () => {
   console.log(`THE SERVER IS RUNNING AT ${PORT}`);
