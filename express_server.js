@@ -9,19 +9,23 @@ const { checkEmail } = require('./helpers');
 const { urlforUser } = require('./helpers');
 const { generateRandomString } = require('./helpers.js');
 
+//stretch work
+var methodOverride = require('method-override');
+app.use(methodOverride('_method'));
+
 app.use(cookieSession({
   name: 'session',
   keys: ['0128486513'],
-  maxAge: 1000 * 60 * 60
+  maxAge: 1000 * 60
 }));
 app.set('view engine', 'ejs'); //Encode the cookie session
 
 //START: data
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", id: "aJ48lWF", date:"10/3/2019" },
-  i3BoGr: { longURL: "https://www.google.ca", id: "aJ48lW", date:"10/3/2019" },
-  b4UTxQ: { longURL: "https://www.haha.ca", id: "aJ48lWF", date: "10/3/2019" },
-  b2UTxQ: { longURL: "https://www.caca.ca", id: "aJ48lW", date:"10/3/2019" }
+  b6UTxQ: { longURL: "https://www.tsn.ca", id: "aJ48lWF"},
+  i3BoGr: { longURL: "https://www.google.ca", id: "aJ48lW"},
+  b4UTxQ: { longURL: "https://www.haha.ca", id: "aJ48lWF"},
+  b2UTxQ: { longURL: "https://www.caca.ca", id: "aJ48lW"}
 };
 
 const users = {
@@ -68,7 +72,7 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     res.redirect('/login');
   } else {
-    let code = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id], date: (new Date()).toLocaleDateString('en-US')};
+    let code = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id], date: (new Date()).toLocaleDateString()};
     res.render("urls_show", code);
   }
 });
@@ -78,9 +82,9 @@ app.post("/urls", (req, res) => {
   if (!(req.body.longURL)) {
     res.redirect(`/urls/new`);
   } else if ((req.body.longURL).includes('http://')) {
-    urlDatabase[shortURL] = { longURL: `${req.body.longURL}`, id: req.session.user_id, date: (new Date()).toLocaleDateString('en-US') };
+    urlDatabase[shortURL] = { longURL: `${req.body.longURL}`, id: req.session.user_id, date: (new Date()).toLocaleDateString() };
   } else {
-    urlDatabase[shortURL] = { longURL: `http://${req.body.longURL}`, id: req.session.user_id, date:(new Date()).toLocaleDateString('en-US') };
+    urlDatabase[shortURL] = { longURL: `http://${req.body.longURL}`, id: req.session.user_id, date:(new Date()).toLocaleDateString() };
   }
   res.redirect(`/urls/${shortURL}`);
 });
@@ -99,6 +103,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     delete urlDatabase[req.params.shortURL];
   }
   res.redirect('/urls');
+});
+
+app.get('/urls/:shortURL/edit', (req, res) => {
+  if (!req.session.user_id) {
+    res.redirect('/login');
+  } else {
+    let code = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL, user: users[req.session.user_id], date: (new Date()).toLocaleDateString()};
+    res.render("urls_show", code);
+  }
 });
 
 app.post('/urls/:shortURL', (req, res) => {
